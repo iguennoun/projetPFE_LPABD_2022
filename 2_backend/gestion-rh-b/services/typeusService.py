@@ -3,7 +3,7 @@ from models.typeus import TypeUSModel
 from schemas.typeus import TypeUSCreate
 
 async def CreateTypeUS(db:Session, typeus:TypeUSCreate):
-    typeus_db = TypeUSModel(codetypeUS=typeus.codetypeUS, libelleTypeUSFr=typeus.libelleTypeUSFr, libelleTypeUSAr=typeus.libelleTypeUSAr)
+    typeus_db = TypeUSModel(libelleTypeUSFr=typeus.libelleTypeUSFr, libelleTypeUSAr=typeus.libelleTypeUSAr)
     db.add(typeus_db)
     db.commit()
     db.refresh(typeus_db)

@@ -5,40 +5,27 @@ import MainFooter from "../components/MainFooter";
 import axios from "axios";
 import {useRef,  useEffect, useState, Fragment } from "react";
 import { Link } from "react-router-dom"
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const US = () => {
     const effectRan       = useRef(false);
     const [us, setUS] = useState([]);
+    const [data,setData]  = useState({
+        libelleUSFr:"",
+        libelleUSAr:"",
+        codeUSParent:11000,
+        codeTypeUS:0,
+        etat:1
+    }) 
     const [typeus, setTypeUS] = useState([]);
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const ALL_US_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_US;
-    const ALL_TYPEUS_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_TYPEUS;
-
-    useEffect(()=>{
-        if(effectRan.current ===false){
-            axios.get(ALL_US_URL)
-            .then(result=>{
-                setUS(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
-
-            axios.get(ALL_TYPEUS_URL)
-            .then(result=>{
-                setTypeUS(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
-        }
-        return () => {
-            effectRan.current = true
-        }
-    });
+    const US_CRUD         = HOST+":"+PORT+process.env.REACT_APP_US;
+    const ALL_US_URL      = HOST+":"+PORT+process.env.REACT_APP_US;
+    const ALL_TYPEUS_URL     = HOST+":"+PORT+process.env.REACT_APP_TYPEUS;
 
     function IsParent (codeUS){
         let test = false
@@ -50,6 +37,28 @@ const US = () => {
         })
         return test
     };
+
+    const confirmDelete = (codeUS) =>{
+        if(IsParent (codeUS)){
+            alert("Vous ne pouvez supprimer un US Parent")
+        }else{
+            var dialog = window.confirm("Voulez vous vraiment supprimer l'US, codeUS = "+codeUS+"?");
+            if (dialog) {
+                deleteObject(US_CRUD+codeUS)
+                getData(ALL_US_URL,setUS);
+            }
+        }
+    } 
+
+    useEffect(()=>{
+        if(effectRan.current ===false){
+            getData(ALL_US_URL,setUS);
+            getData(ALL_TYPEUS_URL,setTypeUS);
+        }
+        return () => {
+            effectRan.current = true
+        }
+    });
 
     const USChilds = (codeUSParent) => {
         const USChildArray = []
@@ -70,15 +79,15 @@ const US = () => {
                         <td className="border-0">{one_us.libelleUSFr}</td>
                         <td className="text-center">
                             <div className="btn-group btn-group-sm">
-                                <a className="btn btn-primary" href="#">
+                                <Link className="btn btn-primary" to={"/personnel/us/"+one_us.codeUS}>
                                     <i className="fas fa-users">
                                     </i>
-                                </a>
+                                </Link>
                                 <a className="btn btn-warning" href="#">
                                     <i className="fas fa-pencil-alt">
                                     </i>
                                 </a>
-                                <a className="btn btn-danger" href="#">
+                                <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_us.codeUS)}}>
                                     <i className="fas fa-trash">
                                     </i>
                                 </a>
@@ -102,7 +111,7 @@ const US = () => {
                                     <i className="fas fa-pencil-alt">
                                     </i>
                                 </a>
-                                <a className="btn btn-danger" href="#">
+                                <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_us.codeUS)}}>
                                     <i className="fas fa-trash">
                                     </i>
                                 </a>
@@ -203,21 +212,21 @@ const US = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - Unitée structurelle</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,US_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeUS">Code de l'unitée structurelle :</label>
-                                            <input type="text" className="form-control" id="codeUS" name="codeUS" placeholder="11003" pattern="[0-9]{4,}"/>
+                                            <input type="text" className="form-control" id="codeUS" name="codeUS" placeholder="11003" pattern="[0-9]{4,}" onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="libelleUSFr">Libellé de l'unitée structurelle en français :</label>
-                                            <input type="text" className="form-control" id="libelleUSFr" name="libelleUSFr" placeholder="ex : CENTRE REGIONAL D'INFORMATIQUE MARRAKECH" required/>
+                                            <input type="text" className="form-control" id="libelleUSFr" name="libelleUSFr" placeholder="ex : CENTRE REGIONAL D'INFORMATIQUE MARRAKECH" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="libelleUSAr">Libellé de l'unitée structurelle en arabe :</label>
-                                            <input type="text" className="form-control" id="libelleUSAr" name="libelleUSAr" placeholder="ex : المركز الجهوي للمعلوميات مراكش" required/>
+                                            <input type="text" className="form-control" id="libelleUSAr" name="libelleUSAr" placeholder="ex : المركز الجهوي للمعلوميات مراكش" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="codeUSParent">US parent de l'unitée structurelle :</label>
-                                            <select className="custom-select" id="codeUSParent" name="codeUSParent" defaultValue="11000" required>
+                                            <select className="custom-select" id="codeUSParent" name="codeUSParent" defaultValue="11000" required onChange={(e)=> changeInputHandler(e,data, setData)}>
                                             {
                                                 us?.map(one_us =>{
                                                 return (
@@ -229,7 +238,7 @@ const US = () => {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="codeTypeUS">Le type de l'unitée structurelle :</label>
-                                            <select className="custom-select" id="codeTypeUS" name="codeTypeUS" defaultValue="2" required>
+                                            <select className="custom-select" id="codeTypeUS" name="codeTypeUS" defaultValue="2" required onChange={(e)=> changeInputHandler(e,data, setData)}>
                                             {
                                                 typeus?.map(one_typeus =>{
                                                 return (

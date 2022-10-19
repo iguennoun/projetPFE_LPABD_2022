@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Login = () =>{
     return(<>
     <div className="login-page">
@@ -19,7 +21,7 @@ const Login = () =>{
                 </div>
                 </div>
                 <div className="input-group mb-3">
-                <input type="password" className="form-control" placeholder="Mot de passe" />
+                <input type="password" className="form-control" placeholder="Mot de passe" pattern="[A-Za-z0-9]{3,}"/>
                 <div className="input-group-append">
                     <div className="input-group-text">
                     <span className="fas fa-lock"></span>
@@ -37,7 +39,9 @@ const Login = () =>{
                 </div>
 
                 <div className="col-6">
-                    <button type="submit" className="btn btn-primary btn-block">Connexion</button>
+                    <Link to="/dashboard" className="btn btn-primary btn-block">
+                        Connexion
+                    </Link>
                 </div>
                 </div>
             </form>

@@ -4,17 +4,17 @@ import MainFooter from "../components/MainFooter";
 
 import { Link, useParams } from "react-router-dom"
 import axios from "axios";
-import {useRef,  useEffect, useState, Fragment } from "react";
+import {useRef,  useEffect, useState } from "react";
 
 const Personnel = () => {
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
 
-    const ALL_PERSONNEL     = HOST+":"+PORT+process.env.REACT_APP_ALL_PERSONNEL;
+    const ALL_PERSONNEL     = HOST+":"+PORT+process.env.REACT_APP_PERSONNEL;
 
-    const VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_VILLES;
-    const NIVEAUETU_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_NIVEAUETU;
-    const BATIMENT_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_BATIMENTS;
+    const ALL_VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_VILLES;
+    const ALL_NIVEAUETU_URL   = HOST+":"+PORT+process.env.REACT_APP_NIVEAUETU;
+    const ALL_BATIMENT_URL    = HOST+":"+PORT+process.env.REACT_APP_BATIMENTS;
 
     let URL = ALL_PERSONNEL
     const {typeFilter,codeFilter} = useParams()
@@ -54,7 +54,7 @@ const Personnel = () => {
         console.log(min)
         console.log(max)
         console.log(nbrPages)
-      }
+    }
     
     useEffect(()=>{
         if(effectRan.current ===false){
@@ -71,7 +71,7 @@ const Personnel = () => {
                 default : URL += "actif"
             }
 
-            axios.get(ALL_PERSONNEL)
+            axios.get(URL)
             .then(result=>{
                 setTotal(result?.data?.length)
                 const nbp = Math.ceil(result?.data?.length / (process.env.REACT_APP_PAGINATION_SIZE))
@@ -91,7 +91,7 @@ const Personnel = () => {
             
 
             // For Form
-            axios.get(VILLES_URL)
+            axios.get(ALL_VILLES_URL)
             .then(result=>{
                 setVilles(result.data);
             })
@@ -99,7 +99,7 @@ const Personnel = () => {
                 console.log(error.message);
             });
 
-            axios.get(NIVEAUETU_URL)
+            axios.get(ALL_NIVEAUETU_URL)
             .then(result=>{
                 setNiveauEtu(result.data);
             })
@@ -107,7 +107,7 @@ const Personnel = () => {
                 console.log(error.message);
             });
 
-            axios.get(BATIMENT_URL)
+            axios.get(ALL_BATIMENT_URL)
             .then(result=>{
                 setBatiments(result.data);
             })

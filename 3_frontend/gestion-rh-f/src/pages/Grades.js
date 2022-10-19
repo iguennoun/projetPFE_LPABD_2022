@@ -5,24 +5,34 @@ import MainFooter from "../components/MainFooter";
 import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
 import { Link } from "react-router-dom"
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const Grades = () => {
     const effectRan       = useRef(false);
     const [grades, setGrades] = useState([]);
+    const [data,setData]  = useState({
+        libelleGFr:"",
+        libelleGAr:"",
+    }) 
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const GRADES_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_GRADES;
+    const GRADES_CRUD    = HOST+":"+PORT+process.env.REACT_APP_GRADES;
+    const ALL_GRADES_URL     = HOST+":"+PORT+process.env.REACT_APP_GRADES;
+
+    const confirmDelete = (codeG) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer le grade, codeG = "+codeG+"?");
+        if (dialog) {
+            deleteObject(GRADES_CRUD+codeG)
+            getData(ALL_GRADES_URL,setGrades);
+        }
+    }
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(GRADES_URL)
-            .then(result=>{
-                setGrades(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(ALL_GRADES_URL,setGrades);
         }
         return () => {
             effectRan.current = true
@@ -90,7 +100,7 @@ const Grades = () => {
                                                     <i className="fas fa-pencil-alt">
                                                     </i>
                                                 </a>
-                                                <a className="btn btn-danger" href="#">
+                                                <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_grade.codeG)}}>
                                                     <i className="fas fa-trash">
                                                     </i>
                                                 </a>
@@ -121,7 +131,7 @@ const Grades = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - grade</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,GRADES_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeG">Code du grade :</label>
@@ -129,9 +139,9 @@ const Grades = () => {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="libelleGFr">Libellé du grade en français :</label>
-                                            <input type="text" className="form-control" id="libelleGFr" name="libelleGFr" placeholder="ex : TECHNICIEN DE 3EME GRADE" required/>
+                                            <input type="text" className="form-control" id="libelleGFr" name="libelleGFr" placeholder="ex : TECHNICIEN DE 3EME GRADE" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="libelleGAr">Libellé du grade en arabe :</label>
-                                            <input type="text" className="form-control" id="libelleGAr" name="libelleGAr" placeholder="ex : تقني من الدرجة الثالثة" required/>
+                                            <input type="text" className="form-control" id="libelleGAr" name="libelleGAr" placeholder="ex : تقني من الدرجة الثالثة" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                     </div>
                                     <div className="card-footer">

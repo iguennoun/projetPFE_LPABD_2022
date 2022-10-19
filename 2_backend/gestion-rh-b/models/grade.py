@@ -6,7 +6,7 @@ from models.histograde import HistoGradeModel
 
 class GradeModel(Base):
     __tablename__       = "grade"
-    codeG           = Column(Integer,primary_key = True,index = True)
+    codeG           = Column(Integer,primary_key = True,index = True, autoincrement = True)
     libelleGFr      = Column(String(254), unique=True)
     libelleGAr      = Column(String(254), unique=True)
 

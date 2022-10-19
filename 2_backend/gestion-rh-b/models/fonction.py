@@ -6,7 +6,7 @@ from models.histofonction import HistoFonctionModel
 
 class FonctionModel(Base):
     __tablename__       = "fonction"
-    idF                 = Column(Integer,primary_key = True,index = True)
+    idF                 = Column(Integer,primary_key = True,index = True, autoincrement = True)
     libelleF            = Column(String(254), unique=True)
 
     histoFonction       = relationship("HistoFonctionModel", back_populates="fonctionObject")

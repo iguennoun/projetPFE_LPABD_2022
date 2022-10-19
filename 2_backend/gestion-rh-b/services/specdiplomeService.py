@@ -3,7 +3,7 @@ from models.specdiplome import SpecDiplomeModel
 from schemas.specdiplome import SpecDiplomeCreate
 
 async def CreateSpecDiplome(db:Session, specdiplome:SpecDiplomeCreate):
-    specdiplome_db = SpecDiplomeModel(codeSpecDip=specdiplome.codeSpecDip, intituleSpec=specdiplome.intituleSpec)
+    specdiplome_db = SpecDiplomeModel(intituleSpec=specdiplome.intituleSpec)
     db.add(specdiplome_db)
     db.commit()
     db.refresh(specdiplome_db)

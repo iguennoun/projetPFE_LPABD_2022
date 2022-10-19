@@ -45,7 +45,7 @@ const MessagesNavbar = () =>{
 }
 
 const NotifNavbar = () => {
-  let nbrNotif = 5
+  let nbrNotif = 3
   let notifItems = { "msg" :[4,3],
                      "frd" :[8,12],
                      "rpt" :[3,2]
@@ -60,12 +60,12 @@ const NotifNavbar = () => {
           <span className="dropdown-item dropdown-header">{nbrNotif} Notifications</span>
           <div className="dropdown-divider"></div>
           <a href="#" className="dropdown-item">
-            <i className="fas fa-envelope mr-2"></i>{notifItems.msg[0]} new messages
+            <i className="fas fa-envelope mr-2"></i>{notifItems.msg[0]} Dmd réinit mdp
             <span className="float-right text-muted text-sm">{notifItems.msg[1]} mins</span>
           </a>
           <div className="dropdown-divider"></div>
           <a href="#" className="dropdown-item">
-            <i className="fas fa-users mr-2"></i>{notifItems.frd[0]} friend requests
+            <i className="fas fa-users mr-2"></i>{notifItems.frd[0]} Dmd de compte
             <span className="float-right text-muted text-sm">{notifItems.frd[1]} hours</span>
           </a>
           <div className="dropdown-divider"></div>

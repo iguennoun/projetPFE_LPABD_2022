@@ -29,6 +29,7 @@ function App() {
         <Route path="/villes" element={<Villes />} />
         <Route path="/typeus" element={<TypeUS />} />
         <Route path="/batiments" element={<Batiments />} />
+        <Route path="/fonctions/:idF" element={<Fonctions />} />
         <Route path="/fonctions" element={<Fonctions />} />
         <Route path="/grades" element={<Grades />} />
         <Route path="/specdiplome" element={<SpecDiplome />} />

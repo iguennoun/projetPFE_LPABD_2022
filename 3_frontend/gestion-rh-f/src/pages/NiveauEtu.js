@@ -5,24 +5,35 @@ import MainFooter from "../components/MainFooter";
 import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
 import { Link } from "react-router-dom"
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const NiveauEtu = () => {
     const effectRan       = useRef(false);
     const [niveauetus, setNiveauEtus] = useState([]);
+    const [data,setData]  = useState({
+        anneeABac:"",
+        titreDip:"",
+        niveauDip:0,
+    }) 
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const NIVEAUETU     = HOST+":"+PORT+process.env.REACT_APP_ALL_NIVEAUETU;
+    const NIVEAUETU_CRUD  = HOST+":"+PORT+process.env.REACT_APP_NIVEAUETU;
+    const ALL_NIVEAUETU     = HOST+":"+PORT+process.env.REACT_APP_NIVEAUETU;
+
+    const confirmDelete = (idNE) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer le niveau d'étude, idNE = "+idNE+"?");
+        if (dialog) {
+            deleteObject(NIVEAUETU_CRUD+idNE)
+            getData(ALL_NIVEAUETU,setNiveauEtus);
+        }
+    }
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(NIVEAUETU)
-            .then(result=>{
-                setNiveauEtus(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(ALL_NIVEAUETU,setNiveauEtus);
         }
         return () => {
             effectRan.current = true
@@ -92,7 +103,7 @@ const NiveauEtu = () => {
                                                     <i className="fas fa-pencil-alt">
                                                     </i>
                                                 </a>
-                                                <a className="btn btn-danger" href="#">
+                                                <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_niveauetu.idNE)}}>
                                                     <i className="fas fa-trash">
                                                     </i>
                                                 </a>
@@ -123,7 +134,7 @@ const NiveauEtu = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - niveau d'étude</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,NIVEAUETU_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="idNE">Code du niveau d'étude :</label>
@@ -131,11 +142,11 @@ const NiveauEtu = () => {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="anneeAbac">BAC + X :</label>
-                                            <input type="text" className="form-control" id="anneeAbac" name="anneeAbac" placeholder="ex : BAC +3" required/>
+                                            <input type="text" className="form-control" id="anneeAbac" name="anneeAbac" placeholder="ex : BAC +3" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="titreDip">Titre du diplôme du niveau d'étude :</label>
-                                            <input type="text" className="form-control" id="titreDip" name="titreDip" placeholder="ex : LICENCE" required/>
+                                            <input type="text" className="form-control" id="titreDip" name="titreDip" placeholder="ex : LICENCE" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="niveauDip">Niveau d'étude :</label>
-                                            <input type="number" className="form-control" id="niveauDip" name="niveauDip" placeholder="ex : 6 celui de la licence, selon la nomenclature des diplômes" required/>
+                                            <input type="number" className="form-control" id="niveauDip" name="niveauDip" placeholder="ex : 6 celui de la licence, selon la nomenclature des diplômes" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                     </div>
                                     <div className="card-footer">

@@ -33,32 +33,30 @@ async def GetPersonnel(db:Session, cni:str):
 
 # Filter Functions
 async def GetAllPersonnelWithUS(db:Session, codeUS:int):
-    statment =""
+    statment ="Select p.* from Personnel p, histous hus where p.cni=hus.cni and p.actif=1 and ISNULL(hus.dateFinAffectation) and hus.codeUS="+str(codeUS)
     return db.execute(statement=statment).all()
 
 async def GetAllPersonnelWithTypeUS(db:Session, codeTypeUS:int):
-    statment =""
+    statment ="Select p.* from Personnel p, histous hus, us where p.cni=hus.cni and hus.codeUS=us.codeUS and p.actif=1 and ISNULL(hus.dateFinAffectation) and us.codeTypeUS="+str(codeTypeUS)
     return db.execute(statement=statment).all()
 
 async def GetAllPersonnelInBatiment(db:Session, codeLocal:int):
-    statment =""
-    return db.execute(statement=statment).all()
+    return db.query(PersonnelModel).filter(PersonnelModel.actif == 1, PersonnelModel.codeLocal == codeLocal).all()
 
 async def GetAllPersonnelWithFonction(db:Session, idF:int):
-    statment =""
+    statment ="Select p.* from Personnel p, histofonction hf where p.cni=hf.cni and p.actif=1 and p.cni = (select hf2.cni from histofonction hf2 where hf2.cni=p.cni AND hf2.idF="+str(idF)+" ORDER BY hf2.dateAffect DESC LIMIT 1) GROUP BY p.ppr ORDER BY p.ppr ASC"
     return db.execute(statement=statment).all()
 
 async def GetAllPersonnelWithGrade(db:Session, codeG:int):
-    statment =""
+    statment ="Select p.* from Personnel p, histograde hg where p.cni=hg.cni and p.actif=1 and p.cni = (select hg2.cni from histograde hg2 where hg2.cni=p.cni AND hg2.codeG="+str(codeG)+" ORDER BY hg2.datePromo DESC LIMIT 1) GROUP BY p.ppr ORDER BY p.ppr ASC"
     return db.execute(statement=statment).all()
 
 async def GetAllPersonnelWithSpecDiplome(db:Session, codeSpecDip:int):
-    statment =""
+    statment ="SELECT * FROM `personnel` p, `histodiplome` hd WHERE p.cni=hd.cni AND hd.codeSpecDip="+str(codeSpecDip)
     return db.execute(statement=statment).all()
 
 async def GetAllPersonnelWithNiveauEtu(db:Session, idNE:int):
-    statment =""
-    return db.execute(statement=statment).all()
+    return db.query(PersonnelModel).filter(PersonnelModel.actif == 1, PersonnelModel.idNE == idNE).all()
 
 
 # Stat Functions

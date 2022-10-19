@@ -12,7 +12,7 @@ const ShowPersonnel = () =>{
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
     const {cni}           = useParams()    
-    const ONE_PERSONNEL_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_PERSONNEL+cni;
+    const ONE_PERSONNEL_URL     = HOST+":"+PORT+process.env.REACT_APP_PERSONNEL+cni;
 
     const today = new Date();
     let date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();

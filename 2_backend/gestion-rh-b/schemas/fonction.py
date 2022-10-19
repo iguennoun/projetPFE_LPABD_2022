@@ -2,14 +2,13 @@ from typing import List
 from pydantic import BaseModel
 
 class FonctionBase(BaseModel):
-    idF : int
     libelleF : str
 
 class FonctionCreate(FonctionBase):
     pass
 
 class FonctionObject(FonctionBase):
-    
+    idF : int
     class Config:
             orm_mode = True
 

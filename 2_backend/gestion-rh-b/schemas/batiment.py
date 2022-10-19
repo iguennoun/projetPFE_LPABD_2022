@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from schemas.ville import VilleObject
 
 class BatimentBase(BaseModel):
-    
     libelleBFr         : str
     libelleBAr         : str
     adresse            : str = None

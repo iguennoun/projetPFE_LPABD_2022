@@ -5,34 +5,40 @@ import MainFooter from "../components/MainFooter";
 import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
 import { Link} from "react-router-dom"
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const Batiments = () => {
     const effectRan       = useRef(false);
     const [batiments, setBatiments] = useState([]);
+    const [data,setData]  = useState({
+        libelleBFr:"",
+        libelleBAr:"",
+        adresse:"",
+        coordGPS:"",
+        codeV:192,
+    }) 
     const [villes, setVilles] = useState([]);
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const BATIMENT_URL    = HOST+":"+PORT+process.env.REACT_APP_ALL_BATIMENTS;
-    const VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_VILLES;
+    const BATIMENTS_CRUD    = HOST+":"+PORT+process.env.REACT_APP_BATIMENTS;
+    const ALL_BATIMENTS_URL    = HOST+":"+PORT+process.env.REACT_APP_BATIMENTS;
+    const ALL_VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_ALL_VILLES;
+
+    const confirmDelete = (codeLocal) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer le bâtiment, codeLocal = "+codeLocal+"?");
+        if (dialog) {
+            deleteObject(BATIMENTS_CRUD+codeLocal)
+            getData(ALL_BATIMENTS_URL,setBatiments);
+        }
+    } 
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(BATIMENT_URL)
-            .then(result=>{
-                setBatiments(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
-            axios.get(VILLES_URL)
-            .then(result=>{
-                setVilles(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(ALL_BATIMENTS_URL,setBatiments);
+            getData(ALL_VILLES_URL,setVilles);
         }
         return () => {
             effectRan.current = true
@@ -108,7 +114,7 @@ const Batiments = () => {
                                                         <i className="fas fa-pencil-alt">
                                                         </i>
                                                     </a>
-                                                    <a className="btn btn-danger" href="#">
+                                                    <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_batiment.codeLocal)}}>
                                                         <i className="fas fa-trash">
                                                         </i>
                                                     </a>
@@ -142,29 +148,29 @@ const Batiments = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - bâtiment</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,BATIMENTS_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeLocal">Le code du local  :</label>
                                             <input type="text" className="form-control" id="codeLocal" name="codeLocal" placeholder="ex : 18 - Autoincrement" disabled/>
                                         
                                             <label htmlFor="libelleBFr">Libellé du bâtiment en français :</label>
-                                            <input type="text" className="form-control" id="libelleBFr" name="libelleBFr" placeholder="ex : Bâtiment Targa" required/>
+                                            <input type="text" className="form-control" id="libelleBFr" name="libelleBFr" placeholder="ex : Bâtiment Targa" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="libelleBAr">Libellé du bâtiment en arabe :</label>
-                                            <input type="text" className="form-control" id="libelleBAr" name="libelleBAr" placeholder="ex : مبنى تاركة" required/>
+                                            <input type="text" className="form-control" id="libelleBAr" name="libelleBAr" placeholder="ex : مبنى تاركة" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         
                                             <label htmlFor="adresse">Adresse du bâtiment en français:</label>
-                                            <textarea className="form-control" rows="3" id="adresse" name="adresse" placeholder="ex : Targua-Route de Souihla" required></textarea>
+                                            <textarea className="form-control" rows="3" id="adresse" name="adresse" placeholder="ex : Targua-Route de Souihla" required onChange={(e)=> changeInputHandler(e,data, setData)}></textarea>
                                             <label htmlFor="adresseAr">Adresse du bâtiment en arabe :</label>
                                             <textarea className="form-control" rows="3" id="adresse" name="adresse" placeholder="ex : تارغا - طريق سويهلا" disabled></textarea>
                                             
                                             <div className="form-group">
                                                 <label htmlFor="coordGPS">Coordonnées GPS du bâtiment:</label>
-                                                <input type="text" className="form-control" id="coordGPS" name="coordGPS" placeholder="31.65141045698988, -8.061197020938705" pattern="^-?[0-9]{1,3}(?:\.[0-9]{1,10})?$"/>
+                                                <input type="text" className="form-control" id="coordGPS" name="coordGPS" placeholder="31.65141045698988, -8.061197020938705" pattern="^-?[0-9]{1,3}(?:\.[0-9]{1,10})?$" onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             </div>
                                             <div className="form-group">
                                             <label htmlFor="codeV">Ville du bâtiment :</label>
-                                            <select className="custom-select" id="codeV" name="codeV" defaultValue="192" required>
+                                            <select className="custom-select" id="codeV" name="codeV" defaultValue="192" required onChange={(e)=> changeInputHandler(e,data, setData)}>
                                             {
                                                 villes?.map(one_ville =>{
                                                 return (

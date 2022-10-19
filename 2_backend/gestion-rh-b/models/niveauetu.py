@@ -7,7 +7,7 @@ from schemas.personnel import Personnel
 
 class NiveauEtuModel(Base):
     __tablename__    = "niveauetu"
-    idNE             = Column(Integer,primary_key = True,index = True)
+    idNE             = Column(Integer,primary_key = True,index = True, autoincrement = True)
     anneeABac        = Column(String(254), unique=True)
     titreDip         = Column(String(254), unique=True)
     niveauDip        = Column(Integer, unique=True)

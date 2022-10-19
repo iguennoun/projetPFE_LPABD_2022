@@ -6,7 +6,7 @@ from models.histodiplome import HistoDiplomeModel
 
 class SpecDiplomeModel(Base):
     __tablename__    = "specdiplome"
-    codeSpecDip      = Column(Integer,primary_key = True,index = True)
+    codeSpecDip      = Column(Integer,primary_key = True,index = True, autoincrement = True)
     intituleSpec     = Column(String(254), unique=True)
 
     histoDiplome   = relationship("HistoDiplomeModel", back_populates="secDiplomeObject")

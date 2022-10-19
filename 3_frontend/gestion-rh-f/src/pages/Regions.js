@@ -4,35 +4,40 @@ import MainFooter from "../components/MainFooter";
 
 import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const Regions = () => {
     const effectRan       = useRef(false);
     const [regions, setRegions] = useState([]);
+    const [data,setData]  = useState({
+        codeR: 0,
+        libelleRFr:"",
+        libelleRAr:"",
+        codeP:504
+
+    }) 
     const [pays, setPays] = useState([]);
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const REGIONS_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_REGIONS;
+    const REGIONS_CRUD  = HOST+":"+PORT+process.env.REACT_APP_REGIONS;
+    const ALL_REGIONS_URL  = HOST+":"+PORT+process.env.REACT_APP_REGIONS;
     const ALL_PAYS_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_PAYS;
+
+    const confirmDelete = (codeR) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer la région, codeR = "+codeR+"?");
+        if (dialog) {
+            deleteObject(REGIONS_CRUD+codeR)
+            getData(ALL_REGIONS_URL,setRegions);
+        }
+    }
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(REGIONS_URL)
-            .then(result=>{
-                setRegions(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
-
-            axios.get(ALL_PAYS_URL)
-            .then(result=>{
-                setPays(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(ALL_REGIONS_URL,setRegions);
+            getData(ALL_PAYS_URL,setPays);
         }
         return () => {
             effectRan.current = true
@@ -115,7 +120,7 @@ const Regions = () => {
                                                             </i>
                                                             Edit
                                                         </a>
-                                                        <a className="btn btn-danger btn-sm" href="#">
+                                                        <a className="btn btn-danger btn-sm" href="#" onClick={()=>{confirmDelete(one_region.codeR)}}>
                                                             <i className="fas fa-trash">
                                                             </i>
                                                             Delete
@@ -148,21 +153,21 @@ const Regions = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - région</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,REGIONS_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeR">Code région :</label>
-                                            <input type="text" className="form-control" id="codeR" name="codeR" placeholder="7" pattern="[0-9]{1,}"/>
+                                            <input type="text" className="form-control" id="codeR" name="codeR" placeholder="7" pattern="[0-9]{1,}" onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="libelleRFr">Nom de la région en français :</label>
-                                            <input type="text" className="form-control" id="libelleRFr" name="libelleRFr" placeholder="ex : Région Marrakech-Safi " required/>
+                                            <input type="text" className="form-control" id="libelleRFr" name="libelleRFr" placeholder="ex : Région Marrakech-Safi " required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="libelleRAr">Nom de la région en arabe :</label>
-                                            <input type="text" className="form-control" id="libelleRAr" name="libelleRAr" placeholder="ex : جهة مراكش آسفي" required/>
+                                            <input type="text" className="form-control" id="libelleRAr" name="libelleRAr" placeholder="ex : جهة مراكش آسفي" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="codeP">Pays de la région :</label>
-                                            <select className="custom-select" id="codeP" name="codeP" defaultValue="504" required>
+                                            <select className="custom-select" id="codeP" name="codeP" defaultValue="504" required onChange={(e)=> changeInputHandler(e,data, setData)}>
                                             {
                                                 pays?.map(one_pays =>{
                                                 return (

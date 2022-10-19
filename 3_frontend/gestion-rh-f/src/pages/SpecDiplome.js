@@ -7,26 +7,35 @@ import {useRef,  useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 import Pagination from "../components/tools/Pagination";
 import loadPages from "../components/tools/loadPages";
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const SpecDiplome = () => {
     const effectRan       = useRef(false);
-    const [specdiplomes, setSpecDiplomes] = useState({});
+    const [specdiplomes, setSpecDiplomes] = useState([]);
+    const [data,setData]  = useState({
+        intituleSpec:"",
+    }) 
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
     const SIZE            = process.env.REACT_APP_PAGINATION_SIZE;
-    const SPECDIPLOME_URL   = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_SPECDIPLOME+"?size="+SIZE+"&page=1";
-    let url               = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_SPECDIPLOME+"?size="+SIZE;
+    const SPECDIPLOME_CRUD = HOST+":"+PORT+process.env.REACT_APP_SPECDIPLOME;
+    const RANGEOF_SPECDIPLOME_URL   = HOST+":"+PORT+process.env.REACT_APP_SPECDIPLOME+"?size="+SIZE+"&page=1";
+    let url               = HOST+":"+PORT+process.env.REACT_APP_SPECDIPLOME+"?size="+SIZE;
+
+    const confirmDelete = (codeSpecDip) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer la spécialitée diplôme, codeSpecDip = "+codeSpecDip+"?");
+        if (dialog) {
+            deleteObject(SPECDIPLOME_CRUD+codeSpecDip)
+            getData(RANGEOF_SPECDIPLOME_URL,setSpecDiplomes);
+        }
+    }
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(SPECDIPLOME_URL)
-            .then(result=>{
-                setSpecDiplomes(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(RANGEOF_SPECDIPLOME_URL,setSpecDiplomes);
         }
         return () => {
             effectRan.current = true
@@ -93,7 +102,7 @@ const SpecDiplome = () => {
                                                     <i className="fas fa-pencil-alt">
                                                     </i>
                                                 </a>
-                                                <a className="btn btn-danger" href="#">
+                                                <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_specdiplome.codeSpecDip)}}>
                                                     <i className="fas fa-trash">
                                                     </i>
                                                 </a>
@@ -123,14 +132,14 @@ const SpecDiplome = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - la spécialitée du diplôme</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,SPECDIPLOME_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeSpecDip">Code de la spécialitée du diplôme :</label>
                                             <input type="text" className="form-control" id="codeSpecDip" name="codeSpecDip" placeholder="ex : 27 - Autoincrement" disabled />
                                             
                                             <label htmlFor="intituleSpec">Intitulé la spécialitée du diplôme :</label>
-                                            <input type="text" className="form-control" id="intituleSpec" name="intituleSpec" placeholder="ex : Technicien en exploitation" required/>
+                                            <input type="text" className="form-control" id="intituleSpec" name="intituleSpec" placeholder="ex : Technicien en exploitation" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                     </div>
                                     <div className="card-footer">

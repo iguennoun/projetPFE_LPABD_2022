@@ -3,7 +3,7 @@ from models.grade import GradeModel
 from schemas.grade import GradeCreate
 
 async def CreateGrade(db:Session, grade:GradeCreate):
-    grade_db = GradeModel(codeG=grade.codeG, libelleGFr=grade.libelleGFr, libelleGAr=grade.libelleGAr)
+    grade_db = GradeModel(libelleGFr=grade.libelleGFr, libelleGAr=grade.libelleGAr)
     db.add(grade_db)
     db.commit()
     db.refresh(grade_db)

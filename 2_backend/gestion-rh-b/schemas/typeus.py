@@ -3,7 +3,6 @@ from typing import List
 from pydantic import BaseModel
 
 class TypeUSBase(BaseModel):
-    codeTypeUS       : int
     libelleTypeUSFr  : str
     libelleTypeUSAr  : str
     
@@ -12,7 +11,7 @@ class TypeUSCreate(TypeUSBase):
     pass
 
 class TypeUSObject(TypeUSBase):
-    
+    codeTypeUS : int
     class Config:
             orm_mode = True
 

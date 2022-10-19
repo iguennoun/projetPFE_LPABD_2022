@@ -3,31 +3,42 @@ import MainSidebar from "../components/MainSidebar";
 import MainFooter from "../components/MainFooter";
 
 import axios from "axios";
-import { Link } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import {useRef,  useEffect, useState } from "react";
 import Pagination from "../components/tools/Pagination";
 import loadPages from "../components/tools/loadPages";
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const Fonctions = () => {
     const effectRan       = useRef(false);
-    const [fonctions, setFonctions] = useState({});
+    const [fonctions, setFonctions] = useState([]);
+    //const {idF} = useParams()
+    const [data,setData]  = useState({
+        libelleF:"",
+    }) 
+    
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
     const SIZE            = process.env.REACT_APP_PAGINATION_SIZE;
-    const FONCTIONS_URL   = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_FONCTIONS+"?size="+SIZE+"&page=1";
-    let url               = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_FONCTIONS+"?size="+SIZE;
-    
+    const FONCTIONS_CRUD           = HOST+":"+PORT+process.env.REACT_APP_FONCTIONS;
+    const RANGE_OF_FONCTIONS_URL   = HOST+":"+PORT+process.env.REACT_APP_FONCTIONS+"?size="+SIZE+"&page=1";
+    let url               = HOST+":"+PORT+process.env.REACT_APP_FONCTIONS+"?size="+SIZE;
+
+   const confirmDelete = (idF) =>{
+    var dialog = window.confirm("Voulez vous vraiment supprimer la fonction id = "+idF+"?");
+    if (dialog) {
+        deleteObject(FONCTIONS_CRUD+idF)
+        getData(RANGE_OF_FONCTIONS_URL,setFonctions);
+    }
+   } 
 
     useEffect(()=>{
+
         if(effectRan.current ===false){
-            axios.get(FONCTIONS_URL)
-            .then(result=>{
-                setFonctions(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(RANGE_OF_FONCTIONS_URL,setFonctions);
         }
         return () => {
             effectRan.current = true
@@ -83,6 +94,7 @@ const Fonctions = () => {
                                         <tbody>
                                         {
                                             fonctions?.items?.map(one_fonction =>{
+                                
                                             return (
                                                 <tr key={one_fonction.idF}>
                                                     <td>{one_fonction.idF}</td>
@@ -93,11 +105,11 @@ const Fonctions = () => {
                                                                 <i className="fas fa-users">
                                                                 </i>
                                                             </Link>
-                                                            <a className="btn btn-warning" href="#">
+                                                            <Link className="btn btn-warning" to={"/fonctions/"+one_fonction.idF}>
                                                                 <i className="fas fa-pencil-alt">
                                                                 </i>
-                                                            </a>
-                                                            <a className="btn btn-danger" href="#">
+                                                            </Link>
+                                                            <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_fonction.idF)}}>
                                                                 <i className="fas fa-trash">
                                                                 </i>
                                                             </a>
@@ -130,14 +142,14 @@ const Fonctions = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - fonction</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,FONCTIONS_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="idF">Code de la fonction :</label>
                                             <input type="text" className="form-control" id="idF" name="idF" placeholder="ex : 27 - Autoincrement" disabled />
                                             
-                                            <label htmlFor="LibelleF">Libellé de la fonction :</label>
-                                            <input type="text" className="form-control" id="LibelleF" name="LibelleF" placeholder="ex : Technicien en exploitation" required/>
+                                            <label htmlFor="libelleF">Libellé de la fonction :</label>
+                                            <input type="text" className="form-control" id="libelleF" name="libelleF" placeholder="ex : Technicien en exploitation" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                     </div>
                                     <div className="card-footer">

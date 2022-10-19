@@ -20,37 +20,37 @@ async def get_inactif_personnels(db:Session = Depends(get_db)):
     return all_inactif_personnel
 
 @router.get("/us/{codeUS}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(codeUS:int, db:Session = Depends(get_db)):
+async def get_personnels_by_us(codeUS:int, db:Session = Depends(get_db)):
     all_personnel_by_us = await GetAllPersonnelWithUS(db=db, codeUS=codeUS)
     return all_personnel_by_us
 
 @router.get("/typeus/{codeTypeUS}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(codeTypeUS:int ,db:Session = Depends(get_db)):
+async def get_personnels_by_typeus(codeTypeUS:int ,db:Session = Depends(get_db)):
     all_personnel_by_typeus = await GetAllPersonnelWithTypeUS(db=db, codeTypeUS=codeTypeUS)
     return all_personnel_by_typeus
 
 @router.get("/batiment/{codeLocal}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(codeLocal:int, db:Session = Depends(get_db)):
-    all_personnel_by_batiment = await GetAllPersonnelInBatiment(db=db, codeLocal=codeLocal)
-    return all_personnel_by_batiment
+async def get_personnels_in_batiment(codeLocal:int, db:Session = Depends(get_db)):
+    all_personnel_in_batiment = await GetAllPersonnelInBatiment(db=db, codeLocal=codeLocal)
+    return all_personnel_in_batiment
 
 @router.get("/fonction/{idF}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(idF:int, db:Session = Depends(get_db)):
+async def get_personnels_by_fonction(idF:int, db:Session = Depends(get_db)):
     all_personnel_by_fonction = await GetAllPersonnelWithFonction(db=db, idF=idF)
     return all_personnel_by_fonction
 
 @router.get("/grade/{codeG}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(codeG:int, db:Session = Depends(get_db)):
+async def get_personnels_by_grade(codeG:int, db:Session = Depends(get_db)):
     all_personnel_by_grade = await GetAllPersonnelWithGrade(db=db, codeG=codeG)
     return all_personnel_by_grade
 
-@router.get("/specdiplome/{codeSpedDip}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(codeSpedDip:int, db:Session = Depends(get_db)):
-    all_personnel_by_specdiplome = await GetAllPersonnelWithSpecDiplome(db=db, codeSpedDip=codeSpedDip)
+@router.get("/specdiplome/{codeSpecDip}",response_model=List[Personnel], status_code=200)
+async def get_personnels_by_specdiplome(codeSpecDip:int, db:Session = Depends(get_db)):
+    all_personnel_by_specdiplome = await GetAllPersonnelWithSpecDiplome(db=db, codeSpecDip=codeSpecDip)
     return all_personnel_by_specdiplome
 
 @router.get("/niveauetu/{idNE}",response_model=List[Personnel], status_code=200)
-async def get_inactif_personnels(idNE:int, db:Session = Depends(get_db)):
+async def get_personnels_by_niveauetu(idNE:int, db:Session = Depends(get_db)):
     all_personnel_by_niveauetu = await GetAllPersonnelWithNiveauEtu(db=db, idNE=idNE)
     return all_personnel_by_niveauetu
 

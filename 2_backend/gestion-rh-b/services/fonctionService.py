@@ -3,7 +3,7 @@ from models.fonction import FonctionModel
 from schemas.fonction import FonctionCreate
 
 async def CreateFonction(db:Session, fonction:FonctionCreate):
-    fonction_db = FonctionModel(idF=fonction.idF, libelleF=fonction.libelleF)
+    fonction_db = FonctionModel(libelleF=fonction.libelleF)
     db.add(fonction_db)
     db.commit()
     db.refresh(fonction_db)

@@ -6,37 +6,40 @@ import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
 import Pagination from "../components/tools/Pagination";
 import loadPages from "../components/tools/loadPages";
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const Villes = () => {
     const effectRan       = useRef(false);
     const [villes, setVilles] = useState({});
+    const [data,setData]  = useState({
+        nomVFr:"",
+        nomVAr:"",
+        codeR:0,
+    }) 
     const [regions, setRegions] = useState([]);
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
     const SIZE            = process.env.REACT_APP_PAGINATION_SIZE;
-    const VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_VILLES+"?size="+SIZE+"&page=1";
-    let url               = HOST+":"+PORT+process.env.REACT_APP_RANGEOF_VILLES+"?size="+SIZE;
-    const ALL_REGION_URL  = HOST+":"+PORT+process.env.REACT_APP_ALL_REGIONS;
+    const VILLES_CRUD      = HOST+":"+PORT+process.env.REACT_APP_VILLES
+    const RANGEOF_VILLES_URL      = HOST+":"+PORT+process.env.REACT_APP_VILLES+"?size="+SIZE+"&page=1";
+    let url                       = HOST+":"+PORT+process.env.REACT_APP_VILLES+"?size="+SIZE;
+    const ALL_REGION_URL          = HOST+":"+PORT+process.env.REACT_APP_REGIONS;
+
+    const confirmDelete = (codeV) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer la ville, codeV = "+codeV+"?");
+        if (dialog) {
+            deleteObject(VILLES_CRUD+codeV)
+            getData(RANGEOF_VILLES_URL,setVilles);
+        }
+       } 
 
     useEffect(()=>{
         if(effectRan.current === false){
-            axios.get(VILLES_URL)
-            .then(result=>{
-                setVilles(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
-
-            axios.get(ALL_REGION_URL)
-            .then(result=>{
-                setRegions(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(RANGEOF_VILLES_URL,setVilles);
+            getData(ALL_REGION_URL,setRegions);
         }
         return () => {
             effectRan.current = true
@@ -117,7 +120,7 @@ const Villes = () => {
                                                     </i>
                                                     Edit
                                                 </a>
-                                                <a className="btn btn-danger btn-sm" href="#">
+                                                <a className="btn btn-danger btn-sm" href="#" onClick={()=>{confirmDelete(one_ville.codeV)}}>
                                                     <i className="fas fa-trash">
                                                     </i>
                                                     Delete
@@ -152,21 +155,21 @@ const Villes = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - ville</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,VILLES_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeV">Code ville :</label>
-                                            <input type="text" className="form-control" id="codeV" name="codeV" placeholder="7" pattern="[0-9]{3,}"/>
+                                            <input type="text" className="form-control" id="codeV" name="codeV" placeholder="7" pattern="[0-9]{1,}" onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="nomVFr">Nom de la ville en français :</label>
-                                            <input type="text" className="form-control" id="nomVFr" name="nomVFr" placeholder="ex : Marrakech" required/>
+                                            <input type="text" className="form-control" id="nomVFr" name="nomVFr" placeholder="ex : Marrakech" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="nomVAr">Nom de la ville en arabe :</label>
-                                            <input type="text" className="form-control" id="nomVAr" name="nomVAr" placeholder="ex : مراكش" required/>
+                                            <input type="text" className="form-control" id="nomVAr" name="nomVAr" placeholder="ex : مراكش" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="codeR">Région de la ville :</label>
-                                            <select className="custom-select" id="codeR" name="codeR" defaultValue="7" required>
+                                            <select className="custom-select" id="codeR" name="codeR" defaultValue="7" required onChange={(e)=> changeInputHandler(e,data, setData)}>
                                             {
                                                 regions?.map(one_region =>{
                                                 return (

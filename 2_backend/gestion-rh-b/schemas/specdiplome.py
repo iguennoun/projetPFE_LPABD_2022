@@ -2,14 +2,13 @@ from typing import List
 from pydantic import BaseModel
 
 class SpecDiplomeBase(BaseModel):
-    codeSpecDip    : int
     intituleSpec   : str
 
 class SpecDiplomeCreate(SpecDiplomeBase):
     pass
 
 class SpecDiplomeObject(SpecDiplomeBase):
-    
+    codeSpecDip : int
     class Config:
             orm_mode = True
 

@@ -5,24 +5,34 @@ import MainFooter from "../components/MainFooter";
 import axios from "axios";
 import {useRef,  useEffect, useState } from "react";
 import { Link } from "react-router-dom"
+import submitForm from "../components/tools/post_putAPI";
+import deleteObject from "../components/tools/deleteAPI";
+import getData from "../components/tools/getData";
+import changeInputHandler from "../components/tools/changeInputHandler";
 
 const TypeUS = () => {
     const effectRan       = useRef(false);
     const [typeus, setTypeUS] = useState([]);
+    const [data,setData]  = useState({
+        libelleTypeUSFr:"",
+        libelleTypeUSAr:"",
+    }) 
     const HOST            = process.env.REACT_APP_HOST_URL;
     const PORT            = process.env.REACT_APP_HOST_PORT;
-    const TYPEUS_URL     = HOST+":"+PORT+process.env.REACT_APP_ALL_TYPEUS;
+    const TYPEUS_CRUD        = HOST+":"+PORT+process.env.REACT_APP_TYPEUS;
+    const ALL_TYPEUS_URL     = HOST+":"+PORT+process.env.REACT_APP_TYPEUS;
+
+    const confirmDelete = (codeTypeUS) =>{
+        var dialog = window.confirm("Voulez vous vraiment supprimer le type US, codeTypeUS= "+codeTypeUS+"?");
+        if (dialog) {
+            deleteObject(TYPEUS_CRUD+codeTypeUS)
+            getData(ALL_TYPEUS_URL,setTypeUS);
+        }
+       }
 
     useEffect(()=>{
         if(effectRan.current ===false){
-            axios.get(TYPEUS_URL)
-            .then(result=>{
-                setTypeUS(result.data);
-                console.log(result.data);
-            })
-            .catch(error=>{
-                console.log(error.message);
-            });
+            getData(ALL_TYPEUS_URL,setTypeUS);
         }
         return () => {
             effectRan.current = true
@@ -90,7 +100,7 @@ const TypeUS = () => {
                                                         <i className="fas fa-pencil-alt">
                                                         </i>
                                                     </a>
-                                                    <a className="btn btn-danger" href="#">
+                                                    <a className="btn btn-danger" href="#" onClick={()=>{confirmDelete(one_typeus.codeTypeUS)}}>
                                                         <i className="fas fa-trash">
                                                         </i>
                                                     </a>
@@ -120,7 +130,7 @@ const TypeUS = () => {
                                 <div className="card-header">
                                     <h3 className="card-title">Formulaire - Type US</h3>
                                 </div>
-                                <form action="#">
+                                <form onSubmit={(e) => submitForm(e,TYPEUS_CRUD,data)}>
                                     <div className="card-body">
                                         <div className="form-group">
                                             <label htmlFor="codeTypeUS">Code pays :</label>
@@ -128,9 +138,9 @@ const TypeUS = () => {
                                         </div>
                                         <div className="form-group">
                                             <label htmlFor="libelleTypeUSFr">Libellé Type US en français :</label>
-                                            <input type="text" className="form-control" id="libelleTypeUSFr" name="libelleTypeUSFr" placeholder="ex : Section informatique" required/>
+                                            <input type="text" className="form-control" id="libelleTypeUSFr" name="libelleTypeUSFr" placeholder="ex : Section informatique" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                             <label htmlFor="libelleTypeUSAr">Libellé Type US en arabe :</label>
-                                            <input type="text" className="form-control" id="libelleTypeUSAr" name="libelleTypeUSAr" placeholder="ex : شعبة المعلوميات" required/>
+                                            <input type="text" className="form-control" id="libelleTypeUSAr" name="libelleTypeUSAr" placeholder="ex : شعبة المعلوميات" required onChange={(e)=> changeInputHandler(e,data, setData)}/>
                                         </div>
                                     </div>
                                     <div className="card-footer">
